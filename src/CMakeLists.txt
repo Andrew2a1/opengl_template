@@ -1,0 +1,34 @@
+cmake_minimum_required(VERSION 3.22)
+
+find_package(FreeGLUT REQUIRED)
+find_package(GLEW REQUIRED)
+find_package(glm REQUIRED)
+
+add_executable(${PROJECT_NAME} main.cpp)
+
+target_include_directories(${PROJECT_NAME} PRIVATE
+    ${FreeGLUT_INCLUDE_DIRS}
+    ${GLEW_INCLUDE_DIRS}
+    ${glm_INCLUDE_DIRS}
+)
+
+target_link_libraries(${PROJECT_NAME}
+    FreeGLUT::freeglut_static
+    GLEW::GLEW
+    glm::glm
+)
+
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    CXX_STANDARD 17
+    CXX_STANDARD_REQUIRED TRUE
+)
+
+if (MSVC)
+    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
+else()
+    add_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic -Werror)
+endif()
+
+set(CPACK_PROJECT_NAME ${PROJECT_NAME})
+set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
+include(CPack)
