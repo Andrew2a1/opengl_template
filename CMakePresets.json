@@ -7,7 +7,7 @@
     },
     "configurePresets": [
         {
-            "name": "visualstudio",
+            "name": "vs",
             "displayName": "Visual Studio Build Tools Release - amd64",
             "description": "Using compilers for Visual Studio (x64 architecture)",
             "generator": "Visual Studio 16 2019",
@@ -52,8 +52,12 @@
         {
             "name": "vs-release",
             "displayName": "Visual Studio Build Tools Release",
-            "configurePreset": "visualstudio",
+            "configurePreset": "vs",
             "configuration": "Release"
+        },
+        {
+            "name": "gcc-release",
+            "configurePreset": "gcc"
         }
     ]
 }
