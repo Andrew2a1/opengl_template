@@ -24,9 +24,9 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
 )
 
 if (MSVC)
-    target_compile_options(${PROJECT_NAME} PRIVATE /W4 /WX)
+    target_compile_options(${PROJECT_NAME} PRIVATE /W4)
 else()
-    add_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic -Werror)
+    add_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -pedantic -O3)
 endif()
 
 set(CPACK_PROJECT_NAME ${PROJECT_NAME})

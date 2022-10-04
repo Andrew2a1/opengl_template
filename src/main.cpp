@@ -32,10 +32,10 @@ int main(int argc, char *argv[])
     glutInitWindowSize(400, 400);
     glutCreateWindow("Template");
 
+    std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
+
     glutDisplayFunc(Display);
     glutReshapeFunc(Reshape);
-
-    std::cout << "OpenGL version supported by this platform: " << glGetString(GL_VERSION) << std::endl;
 
     glutMainLoop();
     return 0;

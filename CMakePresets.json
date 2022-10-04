@@ -2,14 +2,14 @@
     "version": 5,
     "cmakeMinimumRequired": {
         "major": 3,
-        "minor": 23,
+        "minor": 19,
         "patch": 0
     },
     "configurePresets": [
         {
-            "name": "vs2019",
-            "displayName": "Visual Studio Build Tools 2019 Release - amd64",
-            "description": "Using compilers for Visual Studio 16 2019 (x64 architecture)",
+            "name": "visualstudio",
+            "displayName": "Visual Studio Build Tools Release - amd64",
+            "description": "Using compilers for Visual Studio (x64 architecture)",
             "generator": "Visual Studio 16 2019",
             "toolset": "host=x64",
             "architecture": "x64",
@@ -20,13 +20,39 @@
                 "CMAKE_CXX_COMPILER": "cl.exe",
                 "CMAKE_BUILD_TYPE": "Release"
             }
+        },
+        {
+            "name": "clang",
+            "displayName": "Clang",
+            "description": "Using compilers: C = clang, CXX = clang++",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "generator": "Ninja",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/${presetName}/install",
+                "CMAKE_C_COMPILER": "clang",
+                "CMAKE_CXX_COMPILER": "clang++",
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "gcc",
+            "displayName": "GCC",
+            "description": "Using compilers: C = gcc, CXX = g++",
+            "generator": "Unix Makefiles",
+            "binaryDir": "${sourceDir}/build/${presetName}",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/${presetName}/install",
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++",
+                "CMAKE_BUILD_TYPE": "Release"
+            }
         }
     ],
     "buildPresets": [
         {
-            "name": "vs2019-release",
-            "displayName": "Visual Studio Build Tools 2019 Release",
-            "configurePreset": "vs2019",
+            "name": "vs-release",
+            "displayName": "Visual Studio Build Tools Release",
+            "configurePreset": "visualstudio",
             "configuration": "Release"
         }
     ]
