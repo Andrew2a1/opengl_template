@@ -7,6 +7,7 @@ find_package(glm REQUIRED)
 add_executable(${PROJECT_NAME} main.cpp)
 
 target_include_directories(${PROJECT_NAME} PRIVATE
+    include/
     ${FreeGLUT_INCLUDE_DIRS}
     ${GLEW_INCLUDE_DIRS}
     ${glm_INCLUDE_DIRS}
@@ -19,8 +20,11 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
-    CXX_STANDARD 17
+    CXX_STANDARD 20
     CXX_STANDARD_REQUIRED TRUE
+    ARCHIVE_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )
 
 if (MSVC)
