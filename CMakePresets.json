@@ -10,7 +10,7 @@
             "name": "vs",
             "displayName": "Visual Studio Build Tools Release - amd64",
             "description": "Using compilers for Visual Studio (x64 architecture)",
-            "generator": "Visual Studio 16 2019",
+            "generator": "Visual Studio 14 2015",
             "toolset": "host=x64",
             "architecture": "x64",
             "binaryDir": "${sourceDir}/build/${presetName}",

@@ -3,25 +3,40 @@
 
 void Display()
 {
-    glClearColor(1.0, 1.0, 1.0, 1.0);
+    glLoadIdentity();
     glClear(GL_COLOR_BUFFER_BIT);
-
-    glColor3f(1.0, 0.0, 1.0);
     glBegin(GL_POLYGON);
-
-    glVertex3f(0.0, 0.0, 0.0);
-    glVertex3f(0.0, 1.0, 0.0);
-    glVertex3f(1.0, 1.0, 0.0);
-    glVertex3f(1.0, 0.0, 0.0);
-
+    glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+    glVertex2f(100.0f, 50.0f);
+    glColor4f(0.0f, 1.0f, 0.0f, 1.0f);
+    glVertex2f(450.0f, 400.0f);
+    glColor4f(0.0f, 0.0f, 1.0f, 1.0f);
+    glVertex2f(450.0f, 50.0f);
     glEnd();
     glFlush();
     glutSwapBuffers();
 }
 
-void Reshape(int, int)
+void Reshape(int cx, int cy)
 {
-    Display();
+    GLsizei width, height;
+    GLdouble aspect;
+    width = cx;
+    height = cy;
+    if (cy == 0)
+    {
+        aspect = (GLdouble)width;
+    }
+    else
+    {
+        aspect = (GLdouble)width / (GLdouble)height;
+    }
+    glViewport(0, 0, width, height);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    gluOrtho2D(0.0, 500.0 * aspect, 0.0, 500.0);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 }
 
 int main(int argc, char *argv[])
