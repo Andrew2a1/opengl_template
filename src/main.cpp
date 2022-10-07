@@ -17,13 +17,10 @@ void Display()
     glutSwapBuffers();
 }
 
-void Reshape(int cx, int cy)
+void Reshape(int width, int height)
 {
-    GLsizei width, height;
-    GLdouble aspect;
-    width = cx;
-    height = cy;
-    if (cy == 0)
+    double aspect;
+    if (height == 0)
     {
         aspect = (GLdouble)width;
     }
