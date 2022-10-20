@@ -1,14 +1,14 @@
 {
-    "version": 5,
+    "version": 2,
     "cmakeMinimumRequired": {
         "major": 3,
-        "minor": 19,
+        "minor": 20,
         "patch": 0
     },
     "configurePresets": [
         {
             "name": "vs",
-            "displayName": "Visual Studio Build Tools Release - amd64",
+            "displayName": "Visual Studio Build Tools - amd64 (Release)",
             "description": "Using compilers for Visual Studio (x64 architecture)",
             "generator": "Visual Studio 16 2019",
             "toolset": "host=x64",
@@ -19,6 +19,17 @@
                 "CMAKE_C_COMPILER": "cl.exe",
                 "CMAKE_CXX_COMPILER": "cl.exe",
                 "CMAKE_BUILD_TYPE": "Release"
+            }
+        },
+        {
+            "name": "vs-debug",
+            "inherits": "vs",
+            "displayName": "Visual Studio Build Tools - amd64 (Debug)",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/${presetName}/install",
+                "CMAKE_C_COMPILER": "cl.exe",
+                "CMAKE_CXX_COMPILER": "cl.exe",
+                "CMAKE_BUILD_TYPE": "Debug"
             }
         },
         {
@@ -51,7 +62,7 @@
         },
         {
             "name": "gcc",
-            "displayName": "GCC",
+            "displayName": "GCC (Release)",
             "description": "Using compilers: C = gcc, CXX = g++",
             "generator": "Unix Makefiles",
             "binaryDir": "${sourceDir}/build/${presetName}",
@@ -61,18 +72,39 @@
                 "CMAKE_CXX_COMPILER": "g++",
                 "CMAKE_BUILD_TYPE": "Release"
             }
+        },
+        {
+            "name": "gcc-debug",
+            "inherits": "gcc",
+            "displayName": "GCC (Debug)",
+            "cacheVariables": {
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/build/${presetName}/install",
+                "CMAKE_C_COMPILER": "gcc",
+                "CMAKE_CXX_COMPILER": "g++",
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
         }
     ],
     "buildPresets": [
         {
             "name": "vs-release",
-            "displayName": "Visual Studio Build Tools Release",
+            "displayName": "Visual Studio Build Tools (Release)",
             "configurePreset": "vs",
             "configuration": "Release"
         },
         {
+            "name": "vs-debug",
+            "displayName": "Visual Studio Build Tools (Debug)",
+            "configurePreset": "vs-debug",
+            "configuration": "Debug"
+        },
+        {
             "name": "gcc-release",
             "configurePreset": "gcc"
+        },
+        {
+            "name": "gcc-debug",
+            "configurePreset": "gcc-debug"
         }
     ]
 }

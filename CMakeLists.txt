@@ -7,5 +7,8 @@ setup_conan_toolchain()
 include(CTest)
 enable_testing()
 
-include(${CONAN_TOOLCHAIN_FILENAME})
-add_subdirectory(src)
+add_subdirectory(apps)
+
+set(CPACK_PROJECT_NAME ${PROJECT_NAME})
+set(CPACK_PROJECT_VERSION ${PROJECT_VERSION})
+include(CPack)
