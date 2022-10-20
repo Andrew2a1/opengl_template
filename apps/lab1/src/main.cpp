@@ -12,12 +12,16 @@ double translate_y = 0;
 double translate_x = 0;
 double angle_1 = 15;
 double angle_2 = 15;
+double angle_3 = 0;
+double angle_4 = 0;
 
 bool is_left_btn_pressed = false;
 bool is_right_btn_pressed = false;
+bool is_middle_btn_pressed = false;
 
 glm::vec2 prev_left_mouse_pos{0, 0};
 glm::vec2 prev_right_mouse_pos{0, 0};
+glm::vec2 prev_middle_mouse_pos{0, 0};
 
 GLfloat RedSurface[] = {1.0f, 0.0f, 0.0f, 1.0f};
 GLfloat GreenSurface[] = {0.0f, 1.0f, 0.0f, 1.0f};
@@ -39,6 +43,8 @@ void Display()
     glPushMatrix();
     glTranslated(translate_x, translate_y, -9.0);
     glRotated(angle_1, 0, 0, 1);
+    glRotated(angle_3, 0, 1, 0);
+    glRotated(angle_4, 1, 0, 0);
     glPushMatrix();
     glTranslated(1, 0, 0);
     glRotated(angle_2, 0, 0, 1);
@@ -102,6 +108,18 @@ void mouse_callback(int button, int state, int x, int y)
             is_right_btn_pressed = false;
         }
     }
+    else if (button == GLUT_MIDDLE_BUTTON)
+    {
+        if (state == GLUT_DOWN)
+        {
+            prev_middle_mouse_pos = {x, y};
+            is_middle_btn_pressed = true;
+        }
+        else
+        {
+            is_middle_btn_pressed = false;
+        }
+    }
 }
 
 void mouse_move_callback(int x, int y)
@@ -122,6 +140,15 @@ void mouse_move_callback(int x, int y)
         prev_right_mouse_pos = pos;
         angle_2 = std::min(std::max(angle_2 - delta.x / 3.0, -90.0), 90.0);
         angle_1 = std::min(std::max(angle_1 - delta.y / 3.0, -180.0), 180.0);
+        Display();
+    }
+
+    if (is_middle_btn_pressed)
+    {
+        const glm::vec2 delta = prev_middle_mouse_pos - pos;
+        prev_middle_mouse_pos = pos;
+        angle_3 = angle_3 - delta.x;
+        angle_4 = angle_4 - delta.y / 3.0;
         Display();
     }
 }
