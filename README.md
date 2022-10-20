@@ -1,4 +1,6 @@
-# OpenGL Template
+# OpenGL Basic C++ Apps
+
+[![Release on Linux](https://github.com/Andrew2a1/opengl_template/actions/workflows/release_linux.yml/badge.svg)](https://github.com/Andrew2a1/opengl_template/actions/workflows/release_linux.yml)
 
 This is basic template for multiplatform C++ OpenGL Application.
 
