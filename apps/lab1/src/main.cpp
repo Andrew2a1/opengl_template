@@ -1,7 +1,8 @@
 #include <GL/freeglut.h>
-#include <iostream>
-#include <glm/glm.hpp>
+
 #include <cmath>
+#include <glm/glm.hpp>
+#include <iostream>
 
 enum GLDisplayListNames
 {
