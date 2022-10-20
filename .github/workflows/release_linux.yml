@@ -1,0 +1,49 @@
+name: Release on Linux
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  release:
+    runs-on: ubuntu-22.04
+    container:
+      image: gcc:12.2
+
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup CMake
+        uses: jwlawson/actions-setup-cmake@v1.13
+        with:
+          cmake-version: '3.22.x'
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+          cache: 'pip'
+
+      - name: Setup Conan
+        run: pip install conan
+
+      - name: Configure build
+        run: cmake --preset gcc -B "build"
+
+      - name: Build all
+        run: cmake --build "build" -j "$(nproc)"
+
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "build/bin/*"
+          body: Linux binaries
+          tag: latest
+          allowUpdates: true
+
