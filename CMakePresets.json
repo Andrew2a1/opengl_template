@@ -34,8 +34,7 @@
         },
         {
             "name": "vs14",
-            "displayName": "Visual Studio Build Tools Release - amd64",
-            "description": "Using compilers for Visual Studio (x64 architecture)",
+            "displayName": "Visual Studio 14 2015",
             "generator": "Visual Studio 14 2015",
             "toolset": "host=x64",
             "architecture": "x64",
@@ -97,6 +96,12 @@
             "displayName": "Visual Studio Build Tools (Debug)",
             "configurePreset": "vs-debug",
             "configuration": "Debug"
+        },
+        {
+            "name": "vs14-release",
+            "displayName": "Visual Studio Build Tools (Release)",
+            "configurePreset": "vs14",
+            "configuration": "Release"
         },
         {
             "name": "gcc-release",
