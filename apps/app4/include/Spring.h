@@ -7,6 +7,7 @@
 class Spring
 {
     std::vector<GLfloat> vertices;
+    std::vector<GLfloat> tex_coords;
     std::vector<GLuint> indices;
 
 public:

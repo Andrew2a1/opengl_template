@@ -13,7 +13,6 @@
 #include <thread>
 #include <vector>
 
-#include "Shader.h"
 #include "Spring.h"
 #include "Texture.h"
 
@@ -120,6 +119,7 @@ void Display()
     /* Kula */
     glPushMatrix();
     glTranslated(0.0, -2.8 - spring_x, 0.0);
+    glRotated(90, 1.0, 0.0, 0.0);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, sphere_texture);
     glCallList(sphereID);
