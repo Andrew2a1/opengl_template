@@ -13,6 +13,7 @@
 #include <thread>
 #include <vector>
 
+#include "Shader.h"
 #include "Spring.h"
 #include "Texture.h"
 
@@ -41,6 +42,7 @@ GLfloat LightPosition[] = {5.0f, 5.0f, 5.0f, 0.0f};
 GLUquadricObj* quadratic = gluNewQuadric();
 unsigned int mysphereID;
 Spring spring;
+Shader* ourShader = nullptr;
 
 unsigned int sphere_texture = 0;
 
@@ -114,7 +116,9 @@ void Display()
     /* Kula */
     glPushMatrix();
     glTranslated(0.0, -2.8 - spring_x, 0.0);
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, sphere_texture);
+    ourShader->use();
     glCallList(mysphereID);
     glBindTexture(GL_TEXTURE_2D, NULL);
     glPopMatrix();
@@ -235,9 +239,7 @@ int main(int argc, char* argv[])
 
     std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
 
-    glutDisplayFunc(Display);
-    glutReshapeFunc(Reshape);
-
+    Shader shader("texture.vs", "texture.fs");
     sphere_texture = LoadTexture("wood.bmp");
     spring.create_vertices(12, 2, 0.03f, 0.25f);
 
@@ -245,13 +247,18 @@ int main(int argc, char* argv[])
     gluQuadricDrawStyle(sphere, GLU_FILL);
     gluQuadricTexture(sphere, TRUE);
     gluQuadricNormals(sphere, GLU_SMOOTH);
-    // Making a display list
     mysphereID = glGenLists(1);
     glNewList(mysphereID, GL_COMPILE);
     gluSphere(sphere, 0.5, 32, 32);
     glEndList();
     gluDeleteQuadric(sphere);
 
+    shader.use();
+    shader.setInt("texture", sphere_texture);
+    ourShader = &shader;
+
+    glutDisplayFunc(Display);
+    glutReshapeFunc(Reshape);
     glutMouseFunc(mouse_callback);
     glutMotionFunc(mouse_move_callback);
     glutTimerFunc(static_cast<int>(UPDATE_DELAY_S * 1000.0f), update_callback, 0);

@@ -6,4 +6,6 @@
 
 #include <GL/freeglut.h>
 
-GLuint LoadTexture(const char *filename);
+#include <string>
+
+GLuint LoadTexture(const std::string &filename);
