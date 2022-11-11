@@ -40,11 +40,11 @@ GLfloat LightSpecular[] = {0.0f, 0.0f, 0.0f, 0.1f};
 GLfloat LightPosition[] = {5.0f, 5.0f, 5.0f, 0.0f};
 
 GLUquadricObj* quadratic = gluNewQuadric();
-unsigned int mysphereID;
+unsigned int sphereID, cylinderID;
 Spring spring;
-Shader* ourShader = nullptr;
 
-unsigned int sphere_texture = 0;
+GLuint sphere_texture = 0;
+GLuint spring_texture = 0;
 
 void Display()
 {
@@ -69,10 +69,13 @@ void Display()
     glPopMatrix();
 
     /* Górne połączenie sprężyny */
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, spring_texture);
+
     glPushMatrix();
     glRotated(90, 0.0, 1.0, 0.0);
     glTranslated(0.0, -0.2, 0.0);
-    gluCylinder(quadratic, 0.03f, 0.03f, 0.25, 32, 32);
+    glCallList(cylinderID);
     glPopMatrix();
 
     glPushMatrix();
@@ -81,8 +84,9 @@ void Display()
     glPopMatrix();
 
     glPushMatrix();
+    glTranslated(0.0, 0.05, 0.0);
     glRotated(90, 1.0, 0.0, 0.0);
-    gluCylinder(quadratic, 0.03f, 0.03f, 0.20, 32, 32);
+    glCallList(cylinderID);
     glPopMatrix();
     /* --- */
 
@@ -98,7 +102,7 @@ void Display()
     glPushMatrix();
     glTranslated(0.0, -2.2 - spring_x, 0.0);
     glRotated(90, 0.0, 1.0, 0.0);
-    gluCylinder(quadratic, 0.03f, 0.03f, 0.25, 32, 32);
+    glCallList(cylinderID);
     glPopMatrix();
 
     glPushMatrix();
@@ -109,7 +113,7 @@ void Display()
     glPushMatrix();
     glTranslated(0.0, -2.2 - spring_x, 0.0);
     glRotated(90, 1.0, 0.0, 0.0);
-    gluCylinder(quadratic, 0.03f, 0.03f, 0.22, 32, 32);
+    glCallList(cylinderID);
     glPopMatrix();
     /* --- */
 
@@ -118,8 +122,7 @@ void Display()
     glTranslated(0.0, -2.8 - spring_x, 0.0);
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, sphere_texture);
-    ourShader->use();
-    glCallList(mysphereID);
+    glCallList(sphereID);
     glBindTexture(GL_TEXTURE_2D, NULL);
     glPopMatrix();
     /* --- */
@@ -158,7 +161,7 @@ void update_callback(int)
     const double spring_force = -k * spring_x;
     const double result_force = spring_force - weight_force;
 
-    // ball_velocity += result_force / ball_mass * UPDATE_DELAY_S;
+    ball_velocity += result_force / ball_mass * UPDATE_DELAY_S;
     spring_x += ball_velocity * UPDATE_DELAY_S;
 
     spring.create_vertices(12, 2 + (float)spring_x, 0.03f, 0.25f);
@@ -239,23 +242,31 @@ int main(int argc, char* argv[])
 
     std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
 
-    Shader shader("texture.vs", "texture.fs");
     sphere_texture = LoadTexture("wood.bmp");
+    spring_texture = LoadTexture("metal.bmp");
     spring.create_vertices(12, 2, 0.03f, 0.25f);
 
+    // Generowanie kuli
     GLUquadricObj* sphere = gluNewQuadric();
     gluQuadricDrawStyle(sphere, GLU_FILL);
     gluQuadricTexture(sphere, TRUE);
     gluQuadricNormals(sphere, GLU_SMOOTH);
-    mysphereID = glGenLists(1);
-    glNewList(mysphereID, GL_COMPILE);
+    sphereID = glGenLists(1);
+    glNewList(sphereID, GL_COMPILE);
     gluSphere(sphere, 0.5, 32, 32);
     glEndList();
     gluDeleteQuadric(sphere);
 
-    shader.use();
-    shader.setInt("texture", sphere_texture);
-    ourShader = &shader;
+    // Generowanie walcow
+    GLUquadricObj* cylinder = gluNewQuadric();
+    gluQuadricDrawStyle(cylinder, GLU_FILL);
+    gluQuadricTexture(cylinder, TRUE);
+    gluQuadricNormals(cylinder, GLU_SMOOTH);
+    cylinderID = glGenLists(1);
+    glNewList(cylinderID, GL_COMPILE);
+    gluCylinder(cylinder, 0.03f, 0.03f, 0.25, 32, 32);
+    glEndList();
+    gluDeleteQuadric(cylinder);
 
     glutDisplayFunc(Display);
     glutReshapeFunc(Reshape);
