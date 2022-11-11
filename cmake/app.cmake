@@ -2,6 +2,7 @@ function(setup_dependencies)
     find_package(FreeGLUT REQUIRED)
     find_package(GLEW REQUIRED)
     find_package(glm REQUIRED)
+    find_package(stb REQUIRED)
 endfunction()
 
 function(setup_app APP_TARGET_NAME)
@@ -18,6 +19,7 @@ function(setup_app APP_TARGET_NAME)
         FreeGLUT::freeglut_static
         GLEW::GLEW
         glm::glm
+        stb::stb
     )
 
     set_target_properties(${APP_TARGET_NAME} PROPERTIES
