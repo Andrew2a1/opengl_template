@@ -34,6 +34,7 @@ public:
     glm::vec3 get_ball_position() const;
     double get_ball_radius() const { return ball_radius; }
     double get_ball_mass() const { return ball_mass; }
+    double get_swing_angle() const { return swing_angle; }
     void set_angular_speed(double speed) { angular_speed = speed; }
     void set_swing_angle(double angle) { swing_angle = angle; }
 };

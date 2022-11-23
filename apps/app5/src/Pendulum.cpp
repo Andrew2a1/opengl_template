@@ -61,13 +61,14 @@ void Pendulum::collide(Pendulum& other)
     this->set_angular_speed(self_velocity);
     other.set_angular_speed(other_velocity);
 
-    const auto self_position = this->get_ball_position();
-    const auto other_position = other.get_ball_position();
-    const auto new_position =
-        other_position + glm::normalize(self_position - other_position) * static_cast<float>((this->ball_radius + other.ball_radius) * 1.01);
+    // const auto self_position = this->get_ball_position();
+    // const auto other_position = other.get_ball_position();
+    // const auto new_position =
+    //     other_position + glm::normalize(other_position - self_position) * static_cast<float>((this->ball_radius + other.ball_radius) * 1.001);
 
-    double new_angle = std::asin(new_position.x / arm_length);
-    if (!std::isnan(new_angle)) swing_angle = new_angle;
+    // double new_angle = std::atan2(new_position.x, -new_position.y) - M_PI_2;
+    // std::cout << "x: " << new_position.x << ", y: " << new_position.y << ", angle: " << new_angle << std::endl;
+    // if (!std::isnan(new_angle)) swing_angle = new_angle;
 }
 
 bool Pendulum::is_colliding(const Pendulum& other) const

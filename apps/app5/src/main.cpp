@@ -24,15 +24,13 @@ double translate_z = -12.0;
 double rotate_x = 0;
 double rotate_y = 0;
 
-double L = 2;
-double sphere_angle = 3.14 / 4;
-double angular_speed = 0;
-
 bool is_left_btn_pressed = false;
 bool is_middle_btn_pressed = false;
+bool is_right_btn_pressed = false;
 
 glm::vec2 prev_left_mouse_pos{0, 0};
 glm::vec2 prev_middle_mouse_pos{0, 0};
+glm::vec2 prev_right_mouse_pos{0, 0};
 
 GLfloat LightAmbient[] = {0.1f, 0.1f, 0.1f, 0.1f};
 GLfloat LightDiffuse[] = {0.7f, 0.7f, 0.7f, 0.7f};
@@ -94,20 +92,37 @@ void Reshape(int width, int height)
 
 void update_callback(int)
 {
-    for (auto& pendulum : pendulums)
+    std::vector<std::pair<int, int>> colliding_items;
+
+    if (!is_right_btn_pressed)
     {
-        pendulum.update(UPDATE_DELAY_S);
-    }
-    for (int i = 0; i < pendulums.size(); ++i)
-    {
-        for (int j = i + 1; j < pendulums.size(); ++j)
+        for (auto& pendulum : pendulums)
         {
-            if (pendulums[i].is_colliding(pendulums[j]))
+            pendulum.update(UPDATE_DELAY_S);
+        }
+        for (int i = 0; i < pendulums.size(); ++i)
+        {
+            for (int j = i + 1; j < pendulums.size(); ++j)
             {
-                pendulums[i].collide(pendulums[j]);
+                if (pendulums[i].is_colliding(pendulums[j]))
+                {
+                    if (std::find_if(colliding_items.cbegin(), colliding_items.cend(),
+                                     [&](const std::pair<int, int> items) { return items.first == i && items.second == j; }) == colliding_items.cend())
+                    {
+                        pendulums[i].collide(pendulums[j]);
+                        colliding_items.push_back({i, j});
+                    }
+                }
+                else
+                {
+                    colliding_items.erase(std::remove_if(colliding_items.begin(), colliding_items.end(),
+                                                         [&](const std::pair<int, int> items) { return items.first == i && items.second == j; }),
+                                          colliding_items.end());
+                }
             }
         }
     }
+
     glutPostRedisplay();
     glutTimerFunc(static_cast<int>(UPDATE_DELAY_S * 1000.0f), update_callback, 0);
 }
@@ -141,6 +156,18 @@ void mouse_callback(int button, int state, int x, int y)
             is_middle_btn_pressed = false;
         }
     }
+    else if (button == GLUT_RIGHT_BUTTON)
+    {
+        if (state == GLUT_DOWN)
+        {
+            prev_right_mouse_pos = {x, y};
+            is_right_btn_pressed = true;
+        }
+        else
+        {
+            is_right_btn_pressed = false;
+        }
+    }
     else if (button == SCROOL_UP)
     {
         translate_z += 0.1;
@@ -171,6 +198,14 @@ void mouse_move_callback(int x, int y)
         rotate_x = rotate_x - delta.y / 3.0;
         glutPostRedisplay();
     }
+
+    if (is_right_btn_pressed)
+    {
+        const glm::vec2 delta = prev_right_mouse_pos - pos;
+        prev_right_mouse_pos = pos;
+        pendulums[4].set_swing_angle(pendulums[4].get_swing_angle() - delta.x / 64.0);
+        glutPostRedisplay();
+    }
 }
 
 int main(int argc, char* argv[])
@@ -187,8 +222,6 @@ int main(int argc, char* argv[])
     {
         pendulums.emplace_back(glm::vec3{(i + 5) * 1.5, 0, 0});
     }
-
-    pendulums[4].set_swing_angle(3.14 / 2);
 
     glutDisplayFunc(Display);
     glutReshapeFunc(Reshape);
