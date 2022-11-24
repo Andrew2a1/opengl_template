@@ -17,12 +17,16 @@
 #include "Texture.h"
 
 constexpr float UPDATE_DELAY_S = 1.0f / 60.0f;  // 60FPS
+float simulation_speed = 1;
 
 double translate_y = 1.5;
 double translate_x = 0;
 double translate_z = -12.0;
 double rotate_x = 0;
 double rotate_y = 0;
+
+GLuint cylinderID, sphereID;
+constexpr double cylinder_len = 7.1;
 
 bool is_left_btn_pressed = false;
 bool is_middle_btn_pressed = false;
@@ -32,12 +36,16 @@ glm::vec2 prev_left_mouse_pos{0, 0};
 glm::vec2 prev_middle_mouse_pos{0, 0};
 glm::vec2 prev_right_mouse_pos{0, 0};
 
-GLfloat LightAmbient[] = {0.1f, 0.1f, 0.1f, 0.1f};
-GLfloat LightDiffuse[] = {0.7f, 0.7f, 0.7f, 0.7f};
+GLfloat LightAmbient[] = {0.2f, 0.2f, 0.2f, 0.2f};
+GLfloat LightDiffuse[] = {0.8f, 0.8f, 0.8f, 0.8f};
 GLfloat LightSpecular[] = {0.0f, 0.0f, 0.0f, 0.1f};
 GLfloat LightPosition[] = {5.0f, 5.0f, 5.0f, 0.0f};
 
 std::vector<Pendulum> pendulums;
+
+GLuint wood_texture = 0;
+GLuint metal_texture = 0;
+GLuint steel_texture = 0;
 
 void Display()
 {
@@ -56,15 +64,105 @@ void Display()
     glLightfv(GL_LIGHT0, GL_POSITION, LightPosition);
     glEnable(GL_LIGHT0);
 
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, metal_texture);
+
+    /* Top */
     glPushMatrix();
-    glScaled(4.0, 0.2, 2.0);
-    glutSolidCube(1.0);
+    glTranslated(-cylinder_len / 2 + 0.4, 0.0, 1);
+    glRotated(90, 0.0, 1.0, 0.0);
+    glCallList(cylinderID);
     glPopMatrix();
 
+    glPushMatrix();
+    glTranslated(-cylinder_len / 2 + 0.4, 0.0, -1);
+    glRotated(90, 0.0, 1.0, 0.0);
+    glCallList(cylinderID);
+    glPopMatrix();
+
+    /* Sides */
+
+    glPushMatrix();
+    glScaled(1, 0.5, 1);
+    glTranslated(4, 0, 1);
+    glRotated(90, 1.0, 0.0, 0.0);
+    glCallList(cylinderID);
+    glPopMatrix();
+
+    glPushMatrix();
+    glScaled(1, 0.5, 1);
+    glTranslated(-3.1, 0, 1);
+    glRotated(90, 1.0, 0.0, 0.0);
+    glCallList(cylinderID);
+    glPopMatrix();
+
+    glPushMatrix();
+    glScaled(1, 0.5, -1);
+    glTranslated(4, 0, 1);
+    glRotated(90, 1.0, 0.0, 0.0);
+    glCallList(cylinderID);
+    glPopMatrix();
+
+    glPushMatrix();
+    glScaled(1, 0.5, 1);
+    glTranslated(-3.1, 0, -1);
+    glRotated(90, 1.0, 0.0, 0.0);
+    glCallList(cylinderID);
+    glPopMatrix();
+
+    /* Soft ends */
+
+    glPushMatrix();
+    glTranslated(4, 0, 1);
+    glCallList(sphereID);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslated(4, 0, -1);
+    glCallList(sphereID);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslated(-3.1, 0, 1);
+    glCallList(sphereID);
+    glPopMatrix();
+
+    glPushMatrix();
+    glTranslated(-3.1, 0, -1);
+    glCallList(sphereID);
+    glPopMatrix();
+
+    /* Table */
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, wood_texture);
+
+    glPushMatrix();
+    glTranslated(-5, -3.4, -5);
+    glRotated(90, 1, 0, 0);
+
+    glBegin(GL_QUADS);
+    glTexCoord2f(0.0f, 1.0f);
+    glVertex2i(0.0f, 10.0f);
+    glTexCoord2f(0.0f, 0.0f);
+    glVertex2i(0.0f, 0.0f);
+    glTexCoord2f(1.0f, 0.0f);
+    glVertex2i(10.0f, 0.0f);
+    glTexCoord2f(1.0f, 1.0f);
+    glVertex2i(10.0f, 10.0f);
+    glEnd();
+    glPopMatrix();
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, steel_texture);
+
+    /* Pendulums */
     for (const auto& pendulum : pendulums)
     {
         pendulum.draw();
     }
+
+    glBindTexture(GL_TEXTURE_2D, NULL);
 
     glFlush();
     glutSwapBuffers();
@@ -92,13 +190,11 @@ void Reshape(int width, int height)
 
 void update_callback(int)
 {
-    std::vector<std::pair<int, int>> colliding_items;
-
     if (!is_right_btn_pressed)
     {
         for (auto& pendulum : pendulums)
         {
-            pendulum.update(UPDATE_DELAY_S);
+            pendulum.update(simulation_speed * UPDATE_DELAY_S);
         }
         for (int i = 0; i < pendulums.size(); ++i)
         {
@@ -106,18 +202,7 @@ void update_callback(int)
             {
                 if (pendulums[i].is_colliding(pendulums[j]))
                 {
-                    if (std::find_if(colliding_items.cbegin(), colliding_items.cend(),
-                                     [&](const std::pair<int, int> items) { return items.first == i && items.second == j; }) == colliding_items.cend())
-                    {
-                        pendulums[i].collide(pendulums[j]);
-                        colliding_items.push_back({i, j});
-                    }
-                }
-                else
-                {
-                    colliding_items.erase(std::remove_if(colliding_items.begin(), colliding_items.end(),
-                                                         [&](const std::pair<int, int> items) { return items.first == i && items.second == j; }),
-                                          colliding_items.end());
+                    pendulums[i].collide(pendulums[j]);
                 }
             }
         }
@@ -208,6 +293,22 @@ void mouse_move_callback(int x, int y)
     }
 }
 
+void keyboard_arrows_callback(int key, int x, int y)
+{
+    switch (key)
+    {
+        case GLUT_KEY_UP:
+            simulation_speed += 0.01f;
+            break;
+        case GLUT_KEY_DOWN:
+            simulation_speed -= 0.01f;
+            break;
+        default:
+            return;
+    }
+    std::cout << "Simulation speed: " << simulation_speed << std::endl;
+}
+
 int main(int argc, char* argv[])
 {
     glutInit(&argc, argv);
@@ -218,13 +319,38 @@ int main(int argc, char* argv[])
 
     std::cout << "OpenGL version: " << glGetString(GL_VERSION) << std::endl;
 
+    wood_texture = LoadTexture("wood.bmp");
+    metal_texture = LoadTexture("metal.bmp");
+    steel_texture = LoadTexture("steel.bmp");
+
     for (int i = 0; i < 5; ++i)
     {
         pendulums.emplace_back(glm::vec3{(i + 5) * 1.5, 0, 0});
     }
 
+    GLUquadricObj* cylinder = gluNewQuadric();
+    gluQuadricDrawStyle(cylinder, GLU_FILL);
+    gluQuadricTexture(cylinder, TRUE);
+    gluQuadricNormals(cylinder, GLU_SMOOTH);
+    cylinderID = glGenLists(1);
+    glNewList(cylinderID, GL_COMPILE);
+    gluCylinder(cylinder, 0.06f, 0.06f, cylinder_len, 32, 32);
+    glEndList();
+    gluDeleteQuadric(cylinder);
+
+    GLUquadricObj* sphere = gluNewQuadric();
+    gluQuadricDrawStyle(sphere, GLU_FILL);
+    gluQuadricTexture(sphere, TRUE);
+    gluQuadricNormals(sphere, GLU_SMOOTH);
+    sphereID = glGenLists(1);
+    glNewList(sphereID, GL_COMPILE);
+    gluSphere(sphere, 0.1, 32, 32);
+    glEndList();
+    gluDeleteQuadric(sphere);
+
     glutDisplayFunc(Display);
     glutReshapeFunc(Reshape);
+    glutSpecialFunc(keyboard_arrows_callback);
     glutMouseFunc(mouse_callback);
     glutMotionFunc(mouse_move_callback);
     glutTimerFunc(static_cast<int>(UPDATE_DELAY_S * 1000.0f), update_callback, 0);

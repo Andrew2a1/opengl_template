@@ -34,7 +34,6 @@ Pendulum::Pendulum(const glm::vec3& position) : position(position)
 
 void Pendulum::update(double dt)
 {
-    constexpr double damping = 0.996;
     const double angular_acceleration = ball_mass * g * -std::sin(swing_angle) / arm_length;
     swing_angle += angular_speed * dt;
     angular_speed = (angular_speed + angular_acceleration * dt) * damping;
@@ -61,14 +60,16 @@ void Pendulum::collide(Pendulum& other)
     this->set_angular_speed(self_velocity);
     other.set_angular_speed(other_velocity);
 
-    // const auto self_position = this->get_ball_position();
-    // const auto other_position = other.get_ball_position();
-    // const auto new_position =
-    //     other_position + glm::normalize(other_position - self_position) * static_cast<float>((this->ball_radius + other.ball_radius) * 1.001);
-
-    // double new_angle = std::atan2(new_position.x, -new_position.y) - M_PI_2;
-    // std::cout << "x: " << new_position.x << ", y: " << new_position.y << ", angle: " << new_angle << std::endl;
-    // if (!std::isnan(new_angle)) swing_angle = new_angle;
+    const auto self_position = this->get_ball_position();
+    const auto other_position = other.get_ball_position();
+    if (self_position.x < other_position.x)
+    {
+        this->swing_angle -= 0.01;
+    }
+    else
+    {
+        this->swing_angle += 0.01;
+    }
 }
 
 bool Pendulum::is_colliding(const Pendulum& other) const
@@ -88,18 +89,22 @@ void Pendulum::draw() const
     glTranslated(position.x - 10, position.y, position.z);
     glRotated(swing_angle * 180 / M_PI, 0, 0, 1);
 
+    /* Top bar */
+    glPushMatrix();
+    glTranslated(0, 0, -arm_length / 2);
+    glCallList(cylinderID);
+    glPopMatrix();
+
+    /* Arm */
     glPushMatrix();
     glRotated(90, 1.0, 0.0, 0.0);
     glCallList(cylinderID);
     glPopMatrix();
 
+    /* Ball */
     glPushMatrix();
     glTranslated(0, -arm_length, 0);
-    // glActiveTexture(GL_TEXTURE0);
-    // glBindTexture(GL_TEXTURE_2D, sphere_texture);
     glCallList(sphereID);
-    // glBindTexture(GL_TEXTURE_2D, NULL);
     glPopMatrix();
-
     glPopMatrix();
 }

@@ -18,6 +18,7 @@ private:
     double arm_length = 2;
     double ball_radius = 0.5;
     double ball_mass = 2;
+    double damping = 0.996;
 
     double swing_angle = 0;
     double angular_speed = 0;
@@ -37,4 +38,5 @@ public:
     double get_swing_angle() const { return swing_angle; }
     void set_angular_speed(double speed) { angular_speed = speed; }
     void set_swing_angle(double angle) { swing_angle = angle; }
+    void set_damping(double new_damping) { damping = new_damping; }
 };

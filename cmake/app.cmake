@@ -9,10 +9,6 @@ function(setup_app APP_TARGET_NAME)
     target_include_directories(${APP_TARGET_NAME}
     PUBLIC
         include/
-    PRIVATE
-        ${FreeGLUT_INCLUDE_DIRS}
-        ${GLEW_INCLUDE_DIRS}
-        ${glm_INCLUDE_DIRS}
     )
 
     target_link_libraries(${APP_TARGET_NAME}
