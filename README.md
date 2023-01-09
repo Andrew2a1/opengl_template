@@ -25,19 +25,19 @@ Conan will raise an error if some system package is missing.
 
 ## Setup
 
-This project uses CMakePresets for compilation simplification.
+This project uses CMakePresets.
 
 To build application on Windows use:
 
 ```bash
-cmake --preset vs
-cmake --build --preset vs-release
+cmake --preset vs_release
+cmake --build --preset vs_release
 ```
 
 To build application on Linux use:
 
 ```bash
-cmake --preset gcc
-cmake --build --preset gcc-release
+cmake --preset gcc_release
+cmake --build --preset gcc_release
 ```
 

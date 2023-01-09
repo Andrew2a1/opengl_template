@@ -33,8 +33,11 @@ jobs:
       - name: Setup Conan
         run: python3 -m pip install conan
 
+      - name: Install missing dependencies
+        run: apt-get install libglew-dev -y
+
       - name: Configure build
-        run: cmake --preset gcc -B "build"
+        run: cmake --preset gcc_release -B "build"
 
       - name: Build all
         run: cmake --build "build" -j "$(nproc)"
