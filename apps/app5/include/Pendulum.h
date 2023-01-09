@@ -1,7 +1,7 @@
 #pragma once
 
 // clang-format off
-#include <gl/glew.h>
+#include <GL/glew.h>
 // clang-format on
 
 #include <GL/freeglut.h>

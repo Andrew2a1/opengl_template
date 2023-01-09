@@ -1,5 +1,5 @@
 // clang-format off
-#include <gl/glew.h>
+#include <GL/glew.h>
 // clang-format on
 
 #include <GL/freeglut.h>
@@ -56,7 +56,7 @@ void Display()
     glRotated(rotate_y, 0.0, 1.0, 0.0);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glBindTexture(GL_TEXTURE_2D, NULL);
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     glLightfv(GL_LIGHT0, GL_AMBIENT, LightAmbient);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, LightDiffuse);
@@ -162,7 +162,7 @@ void Display()
         pendulum.draw();
     }
 
-    glBindTexture(GL_TEXTURE_2D, NULL);
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     glFlush();
     glutSwapBuffers();
@@ -196,9 +196,9 @@ void update_callback(int)
         {
             pendulum.update(simulation_speed * UPDATE_DELAY_S);
         }
-        for (int i = 0; i < pendulums.size(); ++i)
+        for (int i = 0; i < static_cast<int>(pendulums.size()); ++i)
         {
-            for (int j = i + 1; j < pendulums.size(); ++j)
+            for (int j = i + 1; j < static_cast<int>(pendulums.size()); ++j)
             {
                 if (pendulums[i].is_colliding(pendulums[j]))
                 {
@@ -293,7 +293,7 @@ void mouse_move_callback(int x, int y)
     }
 }
 
-void keyboard_arrows_callback(int key, int x, int y)
+void keyboard_arrows_callback(int key, int, int)
 {
     switch (key)
     {
@@ -330,7 +330,7 @@ int main(int argc, char* argv[])
 
     GLUquadricObj* cylinder = gluNewQuadric();
     gluQuadricDrawStyle(cylinder, GLU_FILL);
-    gluQuadricTexture(cylinder, TRUE);
+    gluQuadricTexture(cylinder, true);
     gluQuadricNormals(cylinder, GLU_SMOOTH);
     cylinderID = glGenLists(1);
     glNewList(cylinderID, GL_COMPILE);
@@ -340,7 +340,7 @@ int main(int argc, char* argv[])
 
     GLUquadricObj* sphere = gluNewQuadric();
     gluQuadricDrawStyle(sphere, GLU_FILL);
-    gluQuadricTexture(sphere, TRUE);
+    gluQuadricTexture(sphere, true);
     gluQuadricNormals(sphere, GLU_SMOOTH);
     sphereID = glGenLists(1);
     glNewList(sphereID, GL_COMPILE);

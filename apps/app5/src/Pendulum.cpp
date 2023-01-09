@@ -13,7 +13,7 @@ Pendulum::Pendulum(const glm::vec3& position) : position(position)
 {
     GLUquadricObj* sphere = gluNewQuadric();
     gluQuadricDrawStyle(sphere, GLU_FILL);
-    gluQuadricTexture(sphere, TRUE);
+    gluQuadricTexture(sphere, true);
     gluQuadricNormals(sphere, GLU_SMOOTH);
     sphereID = glGenLists(1);
     glNewList(sphereID, GL_COMPILE);
@@ -23,7 +23,7 @@ Pendulum::Pendulum(const glm::vec3& position) : position(position)
 
     GLUquadricObj* cylinder = gluNewQuadric();
     gluQuadricDrawStyle(cylinder, GLU_FILL);
-    gluQuadricTexture(cylinder, TRUE);
+    gluQuadricTexture(cylinder, true);
     gluQuadricNormals(cylinder, GLU_SMOOTH);
     cylinderID = glGenLists(1);
     glNewList(cylinderID, GL_COMPILE);

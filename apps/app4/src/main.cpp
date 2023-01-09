@@ -1,5 +1,5 @@
 // clang-format off
-#include <gl/glew.h>
+#include <GL/glew.h>
 // clang-format on
 
 #include <GL/freeglut.h>
@@ -54,7 +54,7 @@ void Display()
     glRotated(rotate_y, 0.0, 1.0, 0.0);
 
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glBindTexture(GL_TEXTURE_2D, NULL);
+    glBindTexture(GL_TEXTURE_2D, 0);
 
     glLightfv(GL_LIGHT0, GL_AMBIENT, LightAmbient);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, LightDiffuse);
@@ -123,7 +123,7 @@ void Display()
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, sphere_texture);
     glCallList(sphereID);
-    glBindTexture(GL_TEXTURE_2D, NULL);
+    glBindTexture(GL_TEXTURE_2D, 0);
     glPopMatrix();
     /* --- */
 
@@ -249,7 +249,7 @@ int main(int argc, char* argv[])
     // Generowanie kuli
     GLUquadricObj* sphere = gluNewQuadric();
     gluQuadricDrawStyle(sphere, GLU_FILL);
-    gluQuadricTexture(sphere, TRUE);
+    gluQuadricTexture(sphere, true);
     gluQuadricNormals(sphere, GLU_SMOOTH);
     sphereID = glGenLists(1);
     glNewList(sphereID, GL_COMPILE);
@@ -260,7 +260,7 @@ int main(int argc, char* argv[])
     // Generowanie walcow
     GLUquadricObj* cylinder = gluNewQuadric();
     gluQuadricDrawStyle(cylinder, GLU_FILL);
-    gluQuadricTexture(cylinder, TRUE);
+    gluQuadricTexture(cylinder, true);
     gluQuadricNormals(cylinder, GLU_SMOOTH);
     cylinderID = glGenLists(1);
     glNewList(cylinderID, GL_COMPILE);
